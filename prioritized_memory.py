@@ -22,15 +22,18 @@ class Memory:  # stored as ( s, a, r, s_ ) in SumTree
     def sample(self, n):
         batch = []
         idxs = []
+        #将总样本切割成batch_size个区间,每个区间长度为total/batch_size
         segment = self.tree.total() / n
         priorities = []
 
         self.beta = np.min([1., self.beta + self.beta_increment_per_sampling])
 
         for i in range(n):
+            #在Batch_size个区间中，每个区间中随机取一值
             a = segment * i
             b = segment * (i + 1)
-
+            #例：从0-100中取一随机下标39
+            #    从101-200中取一随机下标198....
             s = random.uniform(a, b)
             (idx, p, data) = self.tree.get(s)
             priorities.append(p)
